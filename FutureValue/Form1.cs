@@ -9,14 +9,39 @@ namespace FutureValue
 
         private void btnCalculate_Click(object sender, EventArgs e)
         {
-            decimal monthlyInvestment = Convert.ToDecimal(txtMonthlyInvestment.Text);
             //validate the data to handle the exception that gets thrown
+            decimal monthlyInvestment = 0;
+            try
+            {
 
-            decimal yearlyInterestRate = Convert.ToDecimal(txtInterestRate.Text);
-            //validate the data to handle the exception that gets thrown
+                monthlyInvestment = Convert.ToDecimal(txtMonthlyInvestment.Text);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show($"{label1.Text} is incorrect. {ex.Message}. Enter number");
+            }
 
-            int years = Convert.ToInt32(txtYears.Text);
+            decimal yearlyInterestRate = 0;
             //validate the data to handle the exception that gets thrown
+            try
+            {
+                yearlyInterestRate = Convert.ToDecimal(txtInterestRate.Text);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{label2.Text} is incorrect. {ex.Message}. Enter number");
+            }
+
+            int years = 0;
+            //validate the data to handle the exception that gets thrown
+            try
+            {
+                years = Convert.ToInt32(txtYears.Text);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show($"{label3.Text} is incorrect. {ex.Message}. Enter number");
+            }
 
             int months = years * 12;
 
