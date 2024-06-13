@@ -9,51 +9,94 @@ namespace FutureValue
 
         private void btnCalculate_Click(object sender, EventArgs e)
         {
-            decimal monthlyInvestment = 0;
-            try
+           try
             {
-                monthlyInvestment = Convert.ToDecimal(txtMonthlyInvestment.Text);
+                if (IsValidData())
+                {
+                    decimal monthlyInvestment = Convert.ToDecimal(txtMonthlyInvestment.Text);
+                    decimal yearlyInterestRate = Convert.ToDecimal(txtInterestRate.Text);
+                    int years = Convert.ToInt32(txtYears.Text);
+
+                    decimal monthlyInterestRate = yearlyInterestRate / 12 / 100;
+                    int months = years * 12;
+                    decimal futureValue = CalculateFutureValue(monthlyInvestment, monthlyInterestRate, months);
+                    txtFutureValue.Text = futureValue.ToString("c");
+                    txtMonthlyInvestment.Focus();
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"{label1.Text} is incorrect. {ex.Message} Enter number");
+                MessageBox.Show(ex.Message + "\n\n" +
+                    ex.GetType().ToString() + "\n" + ex.StackTrace, "Exception");
             }
-
-            decimal yearlyInterestRate = 0;
-            try
-            {
-                yearlyInterestRate = Convert.ToDecimal(txtInterestRate.Text);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"{label2.Text} is incorrect. {ex.Message} Enter Number");
-            }
-
-            int years = 0;
-            try
-            {
-                years = Convert.ToInt32(txtYears.Text);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"{label3.Text} is incorrect. {ex.Message} Enter Number");
-            }
-
-
-            int months = years * 12;
-
-            decimal monthlyInterestRate = yearlyInterestRate / 12 / 100;
-            decimal futureValue = CalculateFutureValue(0, monthlyInvestment, monthlyInterestRate, months);
-
-            txtFutureValue.Text = futureValue.ToString("c");
-            txtMonthlyInvestment.Focus();
         }
 
-        private decimal CalculateFutureValue(decimal futureValue, decimal monthlyInvestment, decimal monthlyInterestRate, int months)
+        private bool IsValidData()
         {
+            bool success = true;
+            string errorMessage = "";
+
+            // Validate Monthly Investment text box
+            errorMessage += IsDecimal(txtMonthlyInvestment.Text, "MonthlyInvestment");
+            errorMessage += IsWithinRange(txtMonthlyInvestment.Text, "Monthly Investment", 1, 1000);
+
+            //Validate Yearly Interest Rate text box
+            errorMessage += IsDecimal(txtInterestRate.Text, "Yearly Interest Rate");
+            errorMessage += IsWithinRange(txtInterestRate.Text, "Yearly Interest Rate", 1, 20);
+
+            //Validate Number of Years text box
+            errorMessage += IsInt32(txtYears.Text, "Number of Years");
+            errorMessage += IsWithinRange(txtYears.Text, "Number of Years", 1, 40);
+
+            if(errorMessage != "")
+            {
+                success = false;
+                MessageBox.Show(errorMessage, "Entry Error");
+
+            }
+            return success;
+
+        }
+
+        private string IsInt32(string value, string name)
+        {
+            string msg = "";
+            if(!Int32.TryParse(value, out int result))
+            {
+                msg = name + "Must be a valid integer value .\n";
+            }
+            return msg;
+        }
+
+        private string IsWithinRange(string value, string name, decimal min, decimal max)
+        {
+            string msg = "";
+            if (Decimal.TryParse(value, out decimal number))
+            {
+                if(number < min || number > max)
+                {
+                    msg = name + "must be between" + min + "and" + max + ".\n";
+                }
+            }
+            return msg;
+        }
+
+        private string IsDecimal(string value, string name)
+        {
+            string msg = "";
+            if(!Decimal.TryParse(value, out decimal result))
+            {
+                msg = name + "must be a valid decimal value.\n";
+            }
+            return msg;
+        }
+
+        private decimal CalculateFutureValue(decimal monthlyInvestment, decimal monthlyInterestRate, int months)
+        {
+            decimal futureValue = 0m;
             for (int i = 0; i < months; i++)
             {
-                futureValue = (futureValue = monthlyInvestment) * (1 + monthlyInterestRate);
+                futureValue = (futureValue + monthlyInvestment) * (1 + monthlyInterestRate);
             }
             return futureValue;
         }
