@@ -26,7 +26,7 @@ namespace FutureValue
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + "\n\n" +
+                MessageBox.Show(ex.Message + "\n\n" + 
                     ex.GetType().ToString() + "\n" + ex.StackTrace, "Exception");
             }
         }
